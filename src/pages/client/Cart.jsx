@@ -1,4 +1,3 @@
-// src/pages/client/Cart.jsx
 import React, { useEffect, useState } from "react";
 import { supabase } from "../../config/supabase";
 import { useAuth } from "../../context/AuthContext";

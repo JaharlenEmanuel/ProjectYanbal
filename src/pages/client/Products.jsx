@@ -1,4 +1,3 @@
-// src/pages/client/Products.jsx
 import React, { useEffect, useState, useCallback } from "react";
 import { supabase } from "../../config/supabase";
 import ProductCard from "../../components/ProductCard";
