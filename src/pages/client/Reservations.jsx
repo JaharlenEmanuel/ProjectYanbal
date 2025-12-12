@@ -1,8 +1,9 @@
-// src/pages/client/Reservations.jsx - Versión corregida
+// src/pages/client/Reservations.jsx - Versión con notificaciones
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../config/supabase';
 import { useNavigate } from 'react-router-dom';
+import { useNotification } from '../../components/Notifications/NotificationSystem'; // Importar el hook de notificaciones
 
 export default function ClientReservations() {
     const { profile } = useAuth();
@@ -11,6 +12,9 @@ export default function ClientReservations() {
     const [filter, setFilter] = useState('all');
     const [searchTerm, setSearchTerm] = useState('');
     const navigate = useNavigate();
+
+    // Obtener las funciones de notificación
+    const { showSuccess, showError, showInfo, showConfirm } = useNotification();
 
     useEffect(() => {
         if (profile) {
@@ -96,10 +100,9 @@ export default function ClientReservations() {
                                 let productData = null;
 
                                 if (item.product_id) {
-                                    // Solo obtenemos información básica del producto, NO el precio
                                     const { data: product, error: productError } = await supabase
                                         .from('products')
-                                        .select('id, name, description, image_url') // ← SIN 'price'
+                                        .select('id, name, description, image_url, price')
                                         .eq('id', item.product_id)
                                         .single();
 
@@ -110,7 +113,7 @@ export default function ClientReservations() {
 
                                 return {
                                     ...item,
-                                    product: productData // El precio ya está en item.unit_price
+                                    product: productData
                                 };
                             })
                         );
@@ -131,6 +134,7 @@ export default function ClientReservations() {
         } catch (error) {
             console.error('Error loading reservations:', error);
             setReservations([]);
+            showError('Error al cargar las reservas. Por favor, intenta nuevamente.');
         } finally {
             setLoading(false);
         }
@@ -245,35 +249,43 @@ export default function ClientReservations() {
     };
 
     const handleCancelReservation = async (reservationId) => {
-        if (!window.confirm('¿Estás seguro de que deseas cancelar esta reserva?')) {
-            return;
-        }
+        // Usar showConfirm en lugar de window.confirm
+        showConfirm({
+            title: 'Cancelar reserva',
+            message: '¿Estás seguro de que deseas cancelar esta reserva? Esta acción no se puede deshacer.',
+            confirmText: 'Sí, cancelar',
+            cancelText: 'No, mantener',
+            onConfirm: async () => {
+                try {
+                    const { error } = await supabase
+                        .from('reservations')
+                        .update({
+                            status: 'cancelled',
+                            updated_at: new Date().toISOString()
+                        })
+                        .eq('id', reservationId);
 
-        try {
-            const { error } = await supabase
-                .from('reservations')
-                .update({
-                    status: 'cancelled',
-                    updated_at: new Date().toISOString()
-                })
-                .eq('id', reservationId);
+                    if (error) throw error;
 
-            if (error) throw error;
+                    // Actualizar la lista localmente
+                    setReservations(prev =>
+                        prev.map(res =>
+                            res.id === reservationId
+                                ? { ...res, status: 'cancelled', updated_at: new Date().toISOString() }
+                                : res
+                        )
+                    );
 
-            // Actualizar la lista localmente
-            setReservations(prev =>
-                prev.map(res =>
-                    res.id === reservationId
-                        ? { ...res, status: 'cancelled', updated_at: new Date().toISOString() }
-                        : res
-                )
-            );
-
-            alert('Reserva cancelada exitosamente');
-        } catch (error) {
-            console.error('Error cancelling reservation:', error);
-            alert('Error al cancelar la reserva');
-        }
+                    showSuccess('Reserva cancelada exitosamente');
+                } catch (error) {
+                    console.error('Error cancelling reservation:', error);
+                    showError('Error al cancelar la reserva. Por favor, intenta nuevamente.');
+                }
+            },
+            onCancel: () => {
+                showInfo('La reserva se mantiene activa');
+            }
+        });
     };
 
     const filteredReservations = getFilteredReservations();
@@ -434,11 +446,17 @@ export default function ClientReservations() {
                                                     Cancelar reserva
                                                 </button>
                                             )}
-                                            <button className="px-4 py-2 border border-gray-300 text-gray-700 hover:bg-gray-50 rounded-lg text-sm font-medium transition-colors">
+                                            <button
+                                                onClick={() => showInfo('Función en desarrollo')}
+                                                className="px-4 py-2 border border-gray-300 text-gray-700 hover:bg-gray-50 rounded-lg text-sm font-medium transition-colors"
+                                            >
                                                 Descargar comprobante
                                             </button>
                                             {reservation.consultant && (
-                                                <button className="px-4 py-2 border border-purple-300 text-purple-600 hover:bg-purple-50 rounded-lg text-sm font-medium transition-colors">
+                                                <button
+                                                    onClick={() => showInfo('Contactando a la consultora...')}
+                                                    className="px-4 py-2 border border-purple-300 text-purple-600 hover:bg-purple-50 rounded-lg text-sm font-medium transition-colors"
+                                                >
                                                     Contactar consultora
                                                 </button>
                                             )}

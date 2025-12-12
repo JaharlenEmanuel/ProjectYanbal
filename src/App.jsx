@@ -2,6 +2,7 @@
 import React from "react";
 import { Routes, Route, BrowserRouter, Outlet } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
+import { NotificationProvider } from "./components/Notifications/NotificationSystem";
 
 // Páginas de autenticación
 import Login from "./pages/auth/Login";
@@ -49,61 +50,65 @@ function MainLayout() {
 export default function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
-        <Routes>
-          {/* Rutas de autenticación SIN navbar */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+      <NotificationProvider>
 
-          {/* Todas las rutas principales CON navbar */}
-          <Route element={<MainLayout />}>
-            {/* Páginas públicas - accesibles sin login */}
-            <Route path="/" element={<Home />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/category/:id" element={<CategoryProducts />} />
-            <Route path="/product/:id" element={<ProductDetail />} />
-            <Route path="/products" element={<Products />} /> {/* ¡Ahora es público! */}
+        <BrowserRouter>
+          <Routes>
+            {/* Rutas de autenticación SIN navbar */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
 
-            {/* Páginas protegidas (requieren login) */}
-            <Route path="/cart" element={
-              <ProtectedRoute>
-                <Cart />
+            {/* Todas las rutas principales CON navbar */}
+            <Route element={<MainLayout />}>
+              {/* Páginas públicas - accesibles sin login */}
+              <Route path="/" element={<Home />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/category/:id" element={<CategoryProducts />} />
+              <Route path="/product/:id" element={<ProductDetail />} />
+              <Route path="/products" element={<Products />} /> {/* ¡Ahora es público! */}
+
+              {/* Páginas protegidas (requieren login) */}
+              <Route path="/cart" element={
+                <ProtectedRoute>
+                  <Cart />
+                </ProtectedRoute>
+              } />
+              <Route path="/profile" element={
+                <ProtectedRoute>
+                  <Profile />
+                </ProtectedRoute>
+              } />
+              <Route path="/my-reservations" element={
+                <ProtectedRoute>
+                  <ClientReservations />
+                </ProtectedRoute>
+              } />
+            </Route>
+
+            {/* Rutas administrativas */}
+            <Route path="/admin" element={
+              <ProtectedRoute role="admin">
+                <AdminLayout />
               </ProtectedRoute>
-            } />
-            <Route path="/profile" element={
-              <ProtectedRoute>
-                <Profile />
-              </ProtectedRoute>
-            } />
-            <Route path="/my-reservations" element={
-              <ProtectedRoute>
-                <ClientReservations />
-              </ProtectedRoute>
-            } />
-          </Route>
+            }>
+              <Route index element={<Dashboard />} />
+              <Route path="dashboard" element={<Dashboard />} />
+              <Route path="users" element={<UsersAdmin />} />
+              <Route path="products" element={<ProductsAdmin />} />
+              <Route path="categories" element={<CategoriesAdmin />} />
+              <Route path="campaigns" element={<CampaignsAdmin />} />
+              <Route path="consultants" element={<ConsultantsAdmin />} />
+              <Route path="reservations" element={<ReservationsAdmin />} />
+              <Route path="profile" element={<ProfileAdmin />} />
+              <Route path="roles" element={<RolesAdmin />} />
+            </Route>
 
-          {/* Rutas administrativas */}
-          <Route path="/admin" element={
-            <ProtectedRoute role="admin">
-              <AdminLayout />
-            </ProtectedRoute>
-          }>
-            <Route index element={<Dashboard />} />
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="users" element={<UsersAdmin />} />
-            <Route path="products" element={<ProductsAdmin />} />
-            <Route path="categories" element={<CategoriesAdmin />} />
-            <Route path="campaigns" element={<CampaignsAdmin />} />
-            <Route path="consultants" element={<ConsultantsAdmin />} />
-            <Route path="reservations" element={<ReservationsAdmin />} />
-            <Route path="profile" element={<ProfileAdmin />} />
-            <Route path="roles" element={<RolesAdmin />} />
-          </Route>
+            {/* Redirección por defecto */}
+            <Route path="*" element={<Home />} />
+          </Routes>
+        </BrowserRouter>
 
-          {/* Redirección por defecto */}
-          <Route path="*" element={<Home />} />
-        </Routes>
-      </BrowserRouter>
+      </NotificationProvider>
     </AuthProvider>
   );
 }

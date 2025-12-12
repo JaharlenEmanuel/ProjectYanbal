@@ -136,7 +136,7 @@ export default function Navbar() {
                             <div className="hidden sm:block">
                                 <span className={`text-xl font-bold ${scrolled ? 'text-gray-900' : 'text-white'
                                     }`}>
-                                    TuTienda
+                                    DESMADYSHOPPING
                                 </span>
                                 <p className={`text-xs ${scrolled ? 'text-gray-600' : 'text-white/80'}`}>
                                     Compras inteligentes

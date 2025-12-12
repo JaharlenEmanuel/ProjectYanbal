@@ -236,8 +236,6 @@ export default function ProductsAdmin() {
     const handleOrder = () => {
         // Lógica para crear orden administrativa
         console.log('Crear orden administrativa:', cart);
-        // Aquí puedes implementar la creación de órdenes/pedidos
-        alert(`Orden creada con ${cart.reduce((total, item) => total + item.quantity, 0)} productos. Total: $${cartTotal.toFixed(2)}`);
         clearCart();
         setShowCart(false);
     };
