@@ -168,7 +168,7 @@ export default function Cart() {
                                             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                                                 {/* Product Info */}
                                                 <div className="flex items-start gap-4 flex-1">
-                                                    <div className="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                                    <div className="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center shrink-0">
                                                         {item.product?.image_url ? (
                                                             <img
                                                                 src={item.product.image_url}
@@ -289,7 +289,7 @@ export default function Cart() {
                                                 disabled={processing || items.length === 0}
                                                 className={`flex-1 px-6 py-3 font-medium rounded-lg transition-colors flex items-center justify-center ${processing || items.length === 0
                                                     ? 'bg-gray-400 cursor-not-allowed'
-                                                    : 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-lg hover:shadow-xl'
+                                                    : 'bg-linear-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-lg hover:shadow-xl'
                                                     }`}
                                             >
                                                 {processing ? (
