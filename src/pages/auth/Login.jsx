@@ -91,14 +91,7 @@ export default function Login() {
 
                         {/* Campo Contraseña */}
                         <div className="space-y-2">
-                            <div className="flex items-center justify-between">
-                                <label className="block text-sm font-medium text-gray-700">
-                                    Contraseña
-                                </label>
-                                <Link to="/forgot-password" className="text-sm text-purple-600 hover:text-purple-500 transition-colors">
-                                    ¿Olvidaste tu contraseña?
-                                </Link>
-                            </div>
+
                             <div className="relative">
                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                     <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
